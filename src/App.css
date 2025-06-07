@@ -98,7 +98,6 @@
 }
 
 .post-content code {
-  background-color: #f3f4f6;
   padding: 0.2rem 0.4rem;
   font-size: 0.95rem;
   border-radius: 4px;
@@ -127,4 +126,29 @@
   border-radius: 1rem;
   padding: 2rem;
   border: 2px d
+}
+
+.post-content p > code {
+  display: block;
+  background-color: #1e1e1e;
+  color: #f8f8f2;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  padding: 1rem;
+  border-radius: 10px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #333;
+  margin: 1.5rem 0;
+  max-height: 420px;
+}
+
+.post-content p > code::-webkit-scrollbar {
+  height: 6px;
+}
+.post-content p > code::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
 }
