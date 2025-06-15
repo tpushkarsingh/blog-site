@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createClient } from "contentful";
 import "./App.css";
+import NewsletterCTA from "./NewsletterCTA"; // adjust the path if needed
 
 const client = createClient({
   space: process.env.REACT_APP_CONTENTFUL_SPACE_ID,
@@ -37,6 +38,9 @@ export default function BlogList() {
     <div className="blog-container">
       <div className="blog-wrapper">
         <h1 className="blog-title">All Published Blogs</h1>
+        {/* ✅ Newsletter CTA at bottom */}
+        <NewsletterCTA />
+        
         {posts.map((post) => (
           <div key={post.id} className="blog-post">
             <Link to={`/${post.slug}`}>
@@ -45,7 +49,11 @@ export default function BlogList() {
             <p className="post-excerpt">{post.excerpt}</p>
           </div>
         ))}
+
+        {/* ✅ Newsletter CTA at bottom */}
+        <NewsletterCTA />
       </div>
     </div>
   );
+
 }
