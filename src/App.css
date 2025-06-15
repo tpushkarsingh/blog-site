@@ -37,11 +37,16 @@
 
 .blog-image {
   width: 100%;
+  max-height: 320px; /* Prevents tall images from stretching */
   height: auto;
+  object-fit: cover;
   border-radius: 0.75rem;
   margin-bottom: 1.5rem;
   border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: block;
 }
+
 
 .post-title {
   font-size: 2rem;
@@ -128,9 +133,10 @@
   border: 2px d
 }
 
+/* Code Block Styling (Your Existing Setup) */
 .post-content p > code {
   display: block;
-  background-color: #1e1e1e;
+  background-color: darkslategrey;
   color: #f8f8f2;
   font-family: 'Fira Code', 'Courier New', monospace;
   font-size: 0.9rem;
@@ -152,3 +158,46 @@
   background: #888;
   border-radius: 4px;
 }
+
+/* 🆕 Table Styling for Rich Text */
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.85rem;
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+}
+
+.post-content th,
+.post-content td {
+  border: 1px solid #e0e0e0;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.4;
+}
+
+.post-content th {
+  background-color: #fafafa;
+  font-weight: 600;
+  color: #333;
+}
+
+.post-content tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+.post-content tr:hover {
+  background-color: #f7f7f7;
+}
+
+/* Scroll on mobile */
+@media (max-width: 768px) {
+  .post-content table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+

@@ -55,27 +55,58 @@
       <div className="blog-container">
         <div className="blog-wrapper">
           <div className="blog-post">
-            {isPreview && <div style={{ color: "orange", marginBottom: "1rem" }}>🟡 Preview Mode</div>}
+    
+            {/* ✅ Top-left aligned inside blog post */}
+            <div style={{ marginBottom: "1rem" }}>
+              <a
+                href="https://blog.slayitcoder.in"
+                style={{
+                  color: "#0070f3",
+                  fontSize: "0.9rem",
+                  textDecoration: "none",
+                  fontWeight: 500,
+                }}
+              >
+                ← Back to Blog Home
+              </a>
+            </div>
+    
+            {isPreview && (
+              <div style={{ color: "orange", marginBottom: "1rem" }}>
+                🟡 Preview Mode
+              </div>
+            )}
+    
             <h1 className="post-title">{post.title}</h1>
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "1rem"
-            }}>
+    
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1rem",
+              }}
+            >
               <p className="post-date" style={{ margin: 0 }}>
                 Published on {new Date(post.publishedDate).toLocaleDateString()}
               </p>
               <LikeButton postId={post.slug} />
             </div>
-
-
+    
             {post.coverImageUrl && (
-              <img src={post.coverImageUrl} alt={post.title} className="blog-image" />
+              <img
+                src={post.coverImageUrl}
+                alt={post.title}
+                className="blog-image"
+              />
             )}
-            <div className="post-content">{documentToReactComponents(post.content)}</div>
+    
+            <div className="post-content">
+              {documentToReactComponents(post.content)}
+            </div>
           </div>
         </div>
       </div>
-    );
+    );    
+    
   }
