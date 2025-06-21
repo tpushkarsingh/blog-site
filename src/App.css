@@ -201,3 +201,18 @@
   }
 }
 
+.blog-post img {
+  max-width: 100%;
+  margin: 2rem 0;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 8px;
+  background-color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.blog-post img:hover {
+  transform: scale(1.015);
+}
+
