@@ -4,10 +4,13 @@ import { useParams } from "react-router-dom";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { BLOCKS } from "@contentful/rich-text-types";
 import { createClient } from "contentful";
+import { Helmet } from "react-helmet";
+
 import "./App.css";
 import LikeButton from "./LikeButton";
 import NewsletterCTA from "./NewsletterCTA";
 
+/* ---------- Contentful clients ---------- */
 const client = createClient({
   space: process.env.REACT_APP_CONTENTFUL_SPACE_ID,
   accessToken: process.env.REACT_APP_CONTENTFUL_DELIVERY_TOKEN,
@@ -23,6 +26,7 @@ export default function BlogPost({ isPreview = false }) {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
 
+  /* ---------- Fetch the post ---------- */
   useEffect(() => {
     const clientToUse = isPreview ? previewClient : client;
 
@@ -30,46 +34,45 @@ export default function BlogPost({ isPreview = false }) {
       .getEntries({
         content_type: "blogPost",
         "fields.slug": slug,
-        include: 10, // ✅ Important: includes linked assets like embedded images
+        include: 10,
       })
       .then((res) => {
-        if (res.items.length) {
-          const item = res.items[0];
+        if (!res.items.length) return;
 
-          const assetsById = {};
-          res.includes?.Asset?.forEach((a) => {
-            assetsById[a.sys.id] = a;
-          });
+        const item = res.items[0];
 
-          const imageId = item.fields.coverImage?.[0]?.sys?.id;
-          const imageAsset = assetsById[imageId];
+        /* Create a quick asset-lookup table for embedded images */
+        const assetsById = {};
+        res.includes?.Asset?.forEach((a) => (assetsById[a.sys.id] = a));
 
-          const postData = {
-            ...item.fields,
-            assetsById,
-            coverImageUrl: imageAsset?.fields?.file?.url
-              ? "https:" + imageAsset.fields.file.url
-              : null,
-          };
+        const imageId   = item.fields.coverImage?.[0]?.sys?.id;
+        const imageAsset = assetsById[imageId];
 
-          setPost(postData);
-          document.title = `${item.fields.title} | SlayItCoder Blog`;
-        }
+        const postData = {
+          ...item.fields,
+          assetsById,
+          coverImageUrl: imageAsset?.fields?.file?.url
+            ? "https:" + imageAsset.fields.file.url
+            : null,
+          coverImageAlt: imageAsset?.fields?.title || item.fields.title,
+        };
+
+        setPost(postData);
       });
   }, [slug, isPreview]);
 
-  if (!post) return <p>Loading...</p>;
+  if (!post) return <p>Loading…</p>;
 
-  // ✅ Rich Text Render Options
+  /* ---------- Rich-text render options ---------- */
   const options = {
     renderNode: {
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
         const assetId = node.data.target.sys.id;
-        const asset = post.assetsById?.[assetId];
-        const url = asset?.fields?.file?.url
+        const asset   = post.assetsById?.[assetId];
+        const url     = asset?.fields?.file?.url
           ? `https:${asset.fields.file.url}`
           : "";
-        const title = asset?.fields?.title || "Embedded Image";
+        const title   = asset?.fields?.title || "Embedded image";
 
         return url ? (
           <img
@@ -87,64 +90,94 @@ export default function BlogPost({ isPreview = false }) {
     },
   };
 
+  /* ---------- Derive meta values ---------- */
+  const metaTitle       = `${post.title} | SlayItCoder`;
+  const metaDescription =
+    post.summary ||
+    post.excerpt ||
+    "Learn AI/ML with beginner-friendly blogs on SlayItCoder.";
+  const metaUrl   = `https://blog.slayitcoder.in/${post.slug}`;
+  const metaImage = post.coverImageUrl || "/default-thumbnail.png";
+
+  /* ---------- Component JSX ---------- */
   return (
-    <div className="blog-container">
-      <div className="blog-wrapper">
-        <div className="blog-post">
-          <div style={{ marginBottom: "1rem" }}>
-            <a
-              href="https://blog.slayitcoder.in"
+    <>
+      {/*  SEO & social-share tags  */}
+      <Helmet>
+        <title>{metaTitle}</title>
+        <meta name="description"        content={metaDescription} />
+        {/* Open Graph */}
+        <meta property="og:title"       content={metaTitle} />
+        <meta property="og:description" content={metaDescription} />
+        <meta property="og:type"        content="article" />
+        <meta property="og:url"         content={metaUrl} />
+        <meta property="og:image"       content={metaImage} />
+        {/* Twitter */}
+        <meta name="twitter:card"       content="summary_large_image" />
+        <meta name="twitter:title"      content={metaTitle} />
+        <meta name="twitter:description"content={metaDescription} />
+        <meta name="twitter:image"      content={metaImage} />
+      </Helmet>
+
+      {/*  Blog layout  */}
+      <div className="blog-container">
+        <div className="blog-wrapper">
+          <div className="blog-post">
+            <div style={{ marginBottom: "1rem" }}>
+              <a
+                href="https://blog.slayitcoder.in"
+                style={{
+                  color: "#0070f3",
+                  fontSize: "0.9rem",
+                  textDecoration: "none",
+                  fontWeight: 500,
+                }}
+              >
+                ← Back to Blog Home
+              </a>
+            </div>
+
+            <NewsletterCTA />
+
+            {isPreview && (
+              <div style={{ color: "orange", marginBottom: "1rem" }}>
+                🟡 Preview Mode
+              </div>
+            )}
+
+            <h1 className="post-title">{post.title}</h1>
+
+            <div
               style={{
-                color: "#0070f3",
-                fontSize: "0.9rem",
-                textDecoration: "none",
-                fontWeight: 500,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1rem",
               }}
             >
-              ← Back to Blog Home
-            </a>
-          </div>
-
-          <NewsletterCTA />
-
-          {isPreview && (
-            <div style={{ color: "orange", marginBottom: "1rem" }}>
-              🟡 Preview Mode
+              <p className="post-date" style={{ margin: 0 }}>
+                Published on{" "}
+                {new Date(post.publishedDate).toLocaleDateString()}
+              </p>
+              <LikeButton postId={post.slug} />
             </div>
-          )}
 
-          <h1 className="post-title">{post.title}</h1>
+            {post.coverImageUrl && (
+              <img
+                src={post.coverImageUrl}
+                alt={post.coverImageAlt}
+                className="blog-image"
+              />
+            )}
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "1rem",
-            }}
-          >
-            <p className="post-date" style={{ margin: 0 }}>
-              Published on{" "}
-              {new Date(post.publishedDate).toLocaleDateString()}
-            </p>
-            <LikeButton postId={post.slug} />
+            <div className="post-content">
+              {documentToReactComponents(post.content, options)}
+            </div>
+
+            <NewsletterCTA />
           </div>
-
-          {post.coverImageUrl && (
-            <img
-              src={post.coverImageUrl}
-              alt={post.title}
-              className="blog-image"
-            />
-          )}
-
-          <div className="post-content">
-            {documentToReactComponents(post.content, options)}
-          </div>
-
-          <NewsletterCTA />
         </div>
       </div>
-    </div>
+    </>
   );
 }
