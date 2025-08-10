@@ -5,11 +5,38 @@
   padding: 2rem;
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+  max-width: 100vw;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
 .blog-wrapper {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 900px) {
+  .blog-wrapper {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
+  .blog-container {
+    padding: 1rem 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .blog-wrapper {
+    padding: 0;
+  }
+  .blog-container {
+    padding: 0.5rem 0.25rem;
+  }
 }
 
 .blog-title {
