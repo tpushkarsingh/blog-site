@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
-import { BLOCKS } from "@contentful/rich-text-types";
+import { BLOCKS, INLINES } from "@contentful/rich-text-types";
 import { createClient } from "contentful";
 import { Helmet } from "react-helmet";
 
@@ -87,6 +87,14 @@ export default function BlogPost({ isPreview = false }) {
           />
         ) : null;
       },
+      [INLINES.HYPERLINK]: (node, children) => {
+      const url = node.data.uri;
+      return (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          {children}
+        </a>
+      );
+    },
     },
   };
 

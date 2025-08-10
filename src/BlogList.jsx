@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createClient } from "contentful";
 import { Helmet } from "react-helmet";
-
 import "./App.css";
 import NewsletterCTA from "./NewsletterCTA";
 
@@ -12,13 +11,18 @@ const client = createClient({
   space: process.env.REACT_APP_CONTENTFUL_SPACE_ID,
   accessToken: process.env.REACT_APP_CONTENTFUL_DELIVERY_TOKEN,
 });
+export const previewClient = createClient({
+  space: process.env.REACT_APP_CONTENTFUL_SPACE_ID,
+  accessToken: process.env.REACT_APP_CONTENTFUL_PREVIEW_TOKEN,
+  host: "preview.contentful.com",
+});
 
-export default function BlogList() {
+export default function BlogList({ isPreview = false }) {
   const [posts, setPosts] = useState([]);
-
+  const clientToUse = isPreview ? previewClient : client;
   /* ---------- Fetch all published posts ---------- */
   useEffect(() => {
-    client
+    clientToUse
       .getEntries({ content_type: "blogPost" })
       .then((res) => {
         const assets = res.includes?.Asset || [];

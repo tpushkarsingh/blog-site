@@ -1,12 +1,26 @@
 // App.jsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import BlogList from "./BlogList";
 import BlogPost from "./BlogPost";
 
+
+function LinkTargetSetter() {
+  const location = useLocation();
+  React.useEffect(() => {
+    const links = document.querySelectorAll("a[href]");
+    links.forEach(link => {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+    });
+  }, [location]);
+  return null;
+}
+
 export default function App() {
+  
   return (
     <>
       {/* ------------ Global <head> tags ------------ */}
@@ -54,8 +68,10 @@ export default function App() {
 
       {/* ------------ Routes ------------ */}
       <Router>
+        <LinkTargetSetter />
         <Routes>
           <Route path="/" element={<BlogList />} />
+          <Route path="/preview" element={<BlogList isPreview={true} />} />
           <Route path="/:slug" element={<BlogPost isPreview={false} />} />
           <Route path="/:slug/preview" element={<BlogPost isPreview={true} />} />
         </Routes>
