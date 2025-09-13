@@ -89,6 +89,29 @@ export default function BlogPost({ isPreview = false }) {
       },
       [INLINES.HYPERLINK]: (node, children) => {
       const url = node.data.uri;
+      if (url.includes("youtube.com") || url.includes("youtu.be")) {
+        let embedUrl = url;
+
+        if (url.includes("youtu.be")) {
+          embedUrl = url.replace("youtu.be/", "www.youtube.com/embed/");
+        } else if (url.includes("watch?v=")) {
+          embedUrl = url.replace("watch?v=", "embed/");
+        }
+        return (
+          <div style={{ margin: "2rem 0", textAlign: "center" }}>
+            <iframe
+              width="100%"
+              height="480"
+              src={embedUrl}
+              title="YouTube video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ borderRadius: "10px" }}
+            ></iframe>
+          </div>
+        );
+      }
       return (
         <a href={url} target="_blank" rel="noopener noreferrer">
           {children}
