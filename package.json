@@ -2,7 +2,6 @@
   "name": "blog-site",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@contentful/rich-text-react-renderer": "^16.0.1",
     "@testing-library/dom": "^10.4.0",
@@ -22,7 +21,7 @@
   },
   "scripts": {
   "start": "react-scripts start",
-  "build": "node --experimental-specifier-resolution=node scripts/generate-sitemap.js && react-scripts build",
+  "build": "node scripts/generate-sitemap.js && react-scripts build",
   "sitemap": "node scripts/generate-sitemap.js"
 }
 ,
